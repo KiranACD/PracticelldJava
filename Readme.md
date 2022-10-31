@@ -294,4 +294,4 @@ it creates a new object in memory. st stores the address of the object. The name
 
 In a copy constructor, we create a new object. st2 will be at a different memory location than st1. 
 
-![Java Memory](images/Untitles Diagram.drawio.png)
+![Java Memory](images/UntitledDiagram.drawio.png)
