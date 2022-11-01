@@ -166,7 +166,7 @@ An attribute or method that has the access modifier protected can be accessed on
 
 4. Default
 
-
+```
             Class   |   Package     | Subclass/child | Subclass/child |   World
                                         (same pkg)        (diff pkg)
 
@@ -177,6 +177,8 @@ default       +     |      +        |       +        |        -       |     -
 protected     +     |      +        |       +        |        +       |     -
 
 public        +     |      +        |       +        |        +       |     +
+
+```
 
 
 **Constructors** - To instantiate an object of a class we run the following
