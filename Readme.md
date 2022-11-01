@@ -295,3 +295,172 @@ it creates a new object in memory. st stores the address of the object. The name
 In a copy constructor, we create a new object. st2 will be at a different memory location than st1. 
 
 ![Java Memory](images/UntitledDiagram.drawio.png)
+
+The above is a Java memory heap. We have two objects that are occupying addresses 1721 and 4741. The name attribute of each object is pointing to the string object at 2141. If we run
+```
+st2.name = "Hello"
+```
+Then an object with string "Hello" is created at 41. The name attribute of st2 now starts pointing to address 41. So, the name attribute of st1 will not change. 
+
+Assume strings are mutable in Java, and assume we run the following code instead of the one above.
+```
+st2.name.add("123")
+```
+This will go to memory address 2141 and add "123" to "Kiran". This will not create a new object. Now, after making the change, the name attribute of st1 will also change from the previous "Kiran" to "Kiran123".
+
+Even though we created a new object, behind the scenes, the new object still refers to a few attributes of the old object. This means the new and old object still share some data. This means both are not completely seperated. This means we performed a shallow copy. As opposed to shallow copy, deep copy means no attribute will have shared data. 
+
+In Java, it is practically difficult to create a deep copy. Consider a student object that has a list of classes. Assume every class has a name and instructor. Lets look at the memory heap.
+
+![Java Memory](images/JavaMemoryListClasses.png)
+
+There are many pointers as all of the data in the memory are of the type object. Hence, to make a deep copy, we will have recursively make a copy of every object and create a new object. This practically very difficult.
+
+```
+doSomething(Student st) {
+    st.name = "Naman";
+}
+
+st1 = new Student();
+doSomething(st1);
+```
+When we run the above code, st1.name will become "Naman". As Java is pass by value, the value that is passed as argument is the address of the object that is stored in st1. So when wwe run st.name = "Naman", we go to the address and change the name attribute in the object. 
+
+However, consider the following function.
+```
+doSomething(Student st) {
+    st = new Student();
+}
+st1 = new Student();
+doSomething(st1);
+```
+In this case, assigning a new object to st in the function doSomething does not change the object stored in st1. The variable st gets a new object without changing the value of st1. If Java supported pass-by-reference, then running the above code will change st1 to the same new object created and stored in st. This is because pass-by-reference is actually passing a reflection of the argument. Pass-by-value is passing the value of the argument to a new variable created in the parameter of the function.
+
+
+**Destructor** - Once, work is done with an object, in languages like Java and Python, garbage collector removes these objects. In languages like C++, which are languages that use pointers, we have to use destructors to free up memory occupied by objects that are not in use anymore. 
+
+
+#### Inheritance
+
+Object oriented programming is based on thinking about software systems in the same way as we think about the real world. We form hierarchy/relations betweeen different entities inorder to understand them. In the same way, object oriented programming also allows us to form hierachies of categorization.
+
+![Animal Representation](images/AnimalRep.png)
+
+Consider the above categorization. If animals can walk, then does that mean a lab can walk? Yes. Lab is a dog is a mammal is an animal that can walk.
+
+This kind of hierarchy of representation allows us to share behaviours and attributes with specific categories.
+
+Representation of hierarchy in classes is known as inheritance. This takes the form of parent/child relationship between different classes.
+
+Consider the example of scaler platform. A user of the platform can have a hierarchy. 
+
+![Scaler User Representation](images/ScalerUserRep.png)
+
+If a user can login(), then all the user's children can also login. Each child of user will share all the members (attributes and methods) of user class. A child class can have its own attributes and methods as well. Parent class can also be called a super class and a child class can also be called a subclass.
+
+Child classes inherit all the members of the parent classes and may or may not add their own members to them.
+
+```
+class User {
+    String username;
+    void login() {
+        system.out("Logging in...");
+    }
+}
+
+class Instructor extends User {
+    String batchName;
+    double avgRating;
+    void scheduleClass(){
+        system.out("Scheduling class...");
+    }
+}
+```
+
+Parent class is a generalization. Child class is a specification.
+
+![Parent Child Representation](images/HighestLevelAbst.png)
+
+Which of these classes has the highest level of abstraction? 
+
+The answer is class A. Abstraction means an idea. Highest level of abstraction means a relatively generalized idea. The least specific class amongst all the classes is class A. 
+
+When an object of the child class is instantiated, it also contains the attributes of the parent class. How are the attributes of the parent class initialized?
+
+There are 2 options.
+
+1. We know how to initialize them. So we can define them in the child class constructor.
+```
+class User {
+    String name;
+    String email;
+    String password;
+
+    void login() {
+        system.out("Logging in...");
+    }
+}
+
+class Instructor extends User{
+    String batch;
+    
+    public void Instructor() {
+        name = "a";
+        email = "email@email.com";
+        password = "password";
+    }
+}
+```
+We might not always know how to initialize the attributes of the parent class. An example would be if the parent class is from a third party library.
+
+2. The constructor of the parent definitely knows how to initialize its attributes. 
+
+![Parent Child Representation](images/ParentChildConst.png)
+
+Suppose we run
+```
+D d = new D();
+```
+a. The constructor of D will be called.
+b. Before the constructor of D executes, it will call the constructor of C.
+c. Before the constructor of C executes, it will call the constructor of B. 
+d. Before the constructor of B executes, it will call the constructor of A.
+
+So the execution of the constructor of A completes first, then the one of B completes, then the one of C completes and then the one of D completes.
+
+This example assumes we are calling default constructors. If we want to call a specific constructor we have to use super().
+```
+class A {
+    A() {
+        System.out.println("Constructor of A");
+    }
+}
+
+class B {
+    B() {
+        System.out.println("Constructor of B");
+    }
+}
+
+class C {
+    C() {
+        System.out.println("Constructor of C");
+    }
+
+    C(String c){
+        System.out.println("Constructor of C with param");
+    }
+}
+
+class D {
+    D() {
+        super(c:"Hello");
+        System.out.println("Constructor of D");
+    }
+}
+```
+The first line of the constructor of D should be super(c:"Hello"). If it is the second line, it will throw an error.
+super() -> super can be thought of as the name of the class. So super() is calling the constructor of the class. So, if we dont pass argument in super(), then it calls the default constructor.
+
+#### Polymorphism
+
