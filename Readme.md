@@ -170,13 +170,13 @@ An attribute or method that has the access modifier protected can be accessed on
             Class   |   Package     | Subclass/child | Subclass/child |   World
                                         (same pkg)        (diff pkg)
 
-private       +            -                -                 -             -
+private       +     |      -        |       -        |        -       |     -
 
-default       +            +                +                 -             - 
+default       +     |      +        |       +        |        -       |     - 
 
-protected     +            +                +                 +             -
+protected     +     |      +        |       +        |        +       |     -
 
-public        +            +                +                 +             +
+public        +     |      +        |       +        |        +       |     +
 
 
 **Constructors** - To instantiate an object of a class we run the following
