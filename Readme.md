@@ -466,3 +466,472 @@ super() -> super can be thought of as the name of the class. So super() is calli
 
 #### Polymorphism
 
+If we go back to the Scaler example, the user takes multiple forms like student, instructor, mentor, TA etc. If we make a list of all users, then the list will take all objects of type User and of type any child class of User.
+
+```
+List<User> users = {
+    new Student();
+    new TA();
+    new User();
+    new Instructor;
+}
+```
+
+Similarly, when creating a new object, we can run the following
+```
+User u = new Student();
+```
+However, we cannot do the following
+```
+Student st = new User();
+```
+This means we can put objects of child classes into a variable that takes the parent class datatype.
+
+```
+class A {
+    int age;
+    String name;
+}
+
+class B extends A {
+    String univ;
+}
+
+class C extends A {
+    String company;
+}
+```
+Given the above, what happens when we run the following?
+```
+A a = new C();
+a.company = "Google";
+```
+This will throw a compile time error. Compiler will allows access to members that are of that data type.
+
+Polymorphism's use case is that it makes the code reusable. Consider the changePassword() function.
+```
+changePassword(User user, String newP) {
+    user.password = newP;
+}
+```
+Now, to this function we can pass objects of any of the child class of User. Polymorphism makes the code general. The more general your code, the better its reusablilty.
+
+There are two types of polymorphism.
+1. Compile Time poymorphism
+2. Run Time polymorphism. 
+
+Until now, we saw polymorphism in inheritance. There are 2 other places where polymorphism exists.
+
+a. **Method Overloading**
+
+Consider a class A
+```
+class A {
+    void hello() {
+        System.out.println("Hello World");
+    }
+    void hello(String Name) {
+        System.out.println("Hello " + Name);
+    }
+}
+```
+When we call hello(), the first function will be called. When we call hello("Naman"), the second function will be called. 
+
+The compiler knows the final form of the function that will execute. Hence, method overloading is compile time polymorphism.
+
+```
+void printHello() {}
+void printHello(String S) {}
+```
+This is and example of method overloading.
+
+```
+void printHello(String S) {}
+void printHello(Integer S) {}
+```
+This is an example of method overloading.
+
+```
+void printHello(String S) {}
+String printHello(String S) {}
+```
+This is not method overloading. This is not even allowed. 
+
+Lets dive deeper into method overloading. First let us understand method signature.
+
+Method signature - NameofMethod(Data types of params). Consider the method
+```
+void printHello(String name, int age) {}
+```
+The signature of the above method is printHello(String, int).
+```
+String doSomething(int years, String time) {}
+```
+The signature of the above method is doSomething(int, String)
+
+The return type of the function is not a part of method signature.
+
+Methods are known to be overloaded when they have the same name but different signature. This is why the third example was not method overloading. Because they had the same name and the same signature. In the first two examples, the method names and the method signatures are the same.
+
+```
+int doSomething() {}
+String doSomething(String s) {}
+```
+This is an example of method overloading, because the method name is the same and the method signature is different.
+
+b. **Method Overriding**
+
+Consider a class
+```
+class A {
+    void doSomething(String a) {
+
+    }
+}
+
+class B extends A {
+    String doSomething(String c) {
+
+    }
+}
+```
+This will throw a compile time error as the method from class A is inherited by class B.
+
+```
+class A {
+    void doSomething(String a) {
+        System.out.println("Hello")
+    }
+}
+
+class B extends A {
+    void doSomething(String c) {
+        System.out.println("Bye")
+
+    }
+}
+```
+
+If parent and child class have a method with the same signature and the same return type, this is called method overriding. The parent's method will get hidden.
+
+Lets look at the client class
+```
+class Client {
+    public static void main(String[] args){
+        A a = new A();
+        a.doSomething();//prints "Hello"
+        a = new B();
+        a.doSomething();prints "Bye"
+    }
+}
+```
+The method that is executed is of the data type that is present at execution and not the type of variable. Thus we do not know the exact output at compile time.
+
+![Parent Child Representation](images/ParentChildConst.png)
+
+Consider the above set of classes. Class A has a method doSomething() that prints "hello". Class C has a method doSomething() tht prints "hi".
+
+```
+D d = new D();
+d.doSomething();
+```
+When we run the above, "hi" is printed.
+
+```
+A a = new D();
+a.doSomething();
+```
+When we run the above, again, "hi" is printed.
+
+```
+C c = new D();
+c.doSomething();
+```
+When we run the above, again, "hi" is printed.
+
+```
+B b = new C();
+b.doSomething();
+```
+When we run the above, again, "hi" is printed.
+
+```
+B b = new B();
+b.doSomething();
+```
+When we run the above, "hello" is printed.
+
+Compiler relies on datatype of variable, while runtime relies on actual object
+Consider the following classes.
+
+```
+class A {
+    void doSomething() {
+        System.out.println("Hello");
+    }
+}
+
+class B extends A {
+    void doSomething() {
+        System.out.println("Hi");
+    }
+
+    void do() {
+        System.out.println("Yo!");
+    }
+}
+```
+
+```
+A a = new B();
+a.do();
+```
+If we run the above code, we will get a compile exception. As do() method is not present in class A. 
+```
+A a = new B();
+a.doSomething();
+```
+This, as we have seen, will print "Hi". This will not throw a compile time exception because doSomething is present in class A as well.
+
+Method overriding is an example of runtime polymorphism.
+
+
+#### Interface
+
+Consider a concept that is not a real entity (not really having any attribute or definition of methods). This concept is categorized by the type of behaviours it supports. For example, animals can be classified by their bahviour. We can say anyone that can eat, walk and run is an animal. We dont need to know how these behaviours work. We just need to know that entities that can exhibit these behaviours are called animals. 
+
+We can implement this using something called interfaces. Interfaces define a set of behaviours that must be implemented by a class in order to be included in the category. 
+
+```
+interface Animal {
+    void eat();
+    void walk();
+    void run();
+}
+
+class Cat implements Animal {
+    void eat(){
+        System.out.println("Cat is eating");
+    }
+
+    void walk(){
+        System.out.println("Cat is waling");
+    }
+
+    void run(){
+        System.out.println("Cat is running");
+    }
+
+    void meow(){
+        System.out.println("Cat is meowing");
+    }
+}
+
+class Dog implements Animal {
+    void eat(){
+        System.out.println("Dog is eating");
+    }
+
+    void walk(){
+        System.out.println("Dog is waling");
+    }
+
+    void run(){
+        System.out.println("Dog is running");
+    }
+}
+```
+This is how interfaces are implemented in Java. Any class that implements an interface can have its own methods apart from those methods declared in the interface. For example, in the class Cat, there is meow method which is exclusively a part of that class.
+
+A principle in OOP is, always program to interface not an implementation. Informally, the same can be said as, we should not program to specific classes. Keeping our classes as general as possible is always the better choice.
+
+Whenever there are multiple was to do something, create an interface with a method called doSomething(), which will then be implemented by other classes that implements the interface.
+
+Benefits of interface is that systems become maintainable. When a class A has an attribute of class B, consider if we can make class B implement an interface. Instead of using class B, we can then use the interface, which generalizes the system.
+
+One class can implement multiple interfaces.
+
+#### Abstract Class
+
+Consider an entity that has attributes and behaiours. However, we dont have clarity on how thee behaviours will work.
+
+For example, consider Animal.
+```
+abstract Animal {
+    String name;
+    int age;
+
+    abstract void walk();
+    abstract int numberOfLegs(int count);
+}
+```
+The benefit of this is that any child class of the abstract class is forced to implement these methods.
+
+```
+class Tiger extends Animal {
+    int legsCount;
+    void walk () {
+        System.out.println("Tiger is walking");
+    }
+    int numberOfLegs(int count) {
+        legsCount = count;
+    }
+}
+```
+If child class cannot implement all the methods of the abstract parent class, then the child class should also be called abstract class. We cannot create objects of abstract classes.
+
+An abstract class with no attributes is called an interface.
+
+Why is multiple inheritance not allowed? Due to something called the diamond problem.
+
+![Diamond Representation](images/DiamondProblem.png)
+
+Lets say we run the following code
+```
+D d = new D();
+d.doSomething();
+```
+The doSomething() method comes from class B as well as class C. So, the compiler is confused. This is called the diamond problem and why some programming languages do not allow multiple inheritance. 
+We can implement multiple interfaces because methods are only declared in an interface. They are not defined. So even if two interfaces have the same methods, as there is no method definition, the compiler will not be confusd. The same is not applicable in case of abstract classes, as abstract classes can have methods that are not abstract. Hence we would run into the diamond problem.
+
+Use abstract classes when we have a parent class for whom we dont want to create an object.
+
+#### Static
+
+```
+class Client {
+    public static void main(String[] args) {
+
+    }
+}
+```
+A method is defined this way
+```
+[access-modifier][return-type][name](){}
+```
+When we call a method, we call the method on the object and not on the class. 
+
+When we run the client file, we dont create an object of the client. So how is the method main() called?
+
+Static keyword can be used with variables and method. A static method or variable allows us to access them without an object of the corresponding class. This is because static methods do not need objects of a class. They can access only static members. 
+
+The most common use case of a static variable is to store a piece of information that is common for all objects of that class. For example, constants.
+
+A static variable is created when we load a class which happens when an application runs.
+
+
+#### SOLID Design Principles
+
+S - Single Responsibility Principle
+O - Open/close Principle
+L - Liskov's Substitution Principle
+I - Interface Segregation Principle
+D - Dependency Inversion Principle
+
+A software system should be extensible, maintainable, reusable, easily testable, modular, understandable. Using these principles will help us design a software system that fulfils these characteristics.
+
+We are going to design a bird to learn the application of these principles. We are going to store information about birds. This information will include names, sounds, flying ability, types etc.
+
+![Bird](images/Bird1.png)
+
+To create a bird
+```
+Bird b1 = new Bird();
+b1.type = "sparrow";
+b1.name = "chirp";
+
+Bird b2 = new Bird();
+b2.type = "crow";
+b2.name = "cawmaker";
+
+b1.fly()
+b2.fly()
+```
+Do all birds fly or make sound in the same way? No.
+
+The makeSound() method in the Bird class would be written like this
+```
+makeSound() {
+    if type == "crow":
+        System.out.println("Kaw Kaw");
+    elif type == "sparrow":
+        System.out.println("chirp chirp");
+    elif type == "pigeon":
+        System.out.println("gutur koo");
+    else:
+        System.out.println("None");
+}
+```
+
+There are issues with the above structure.
+
+1. Readability/Understandability: It is not easy to look at the code and understand where a bug may exist because of all the if-else statements.
+
+2. Testing will become complex as we will have test each if condtion.
+
+3. Merge Conflict: Difficult for multiple developers to work in parallel. Assume a developer is working on some birds and simultaneously another developer is trying to work on other birds and both try to merge their codes. There will be merge conflicts.
+
+4. Code duplication: Suppose another client is only interested in a pigeon flying. The client will make a method just for this instead of using the Bird class. So the code related to pigeon flying is present in 2 places in the codebase. We should aim to never repeat ourselves.
+
+5. It violated the single responsibility principle.
+
+
+**Single Responsibility Principle**
+
+Every code unit (method/class/package) in our codebase should have exactly 1 responsibility. There should be exactly one reason to change the code of that code unit.
+
+In the bird class, makeSound() was responsible for how every bird will make sound. Similarly, fly() method was also responsible for how every bird will fly.
+
+The bird class was responsible to hold attributes and methods of all the birds that exists.
+
+One caveat when discussing single responsibility principle is to avoid over-engineering. There is a tradeoff between class/method explosion and single responsibility principle.
+
+How do we identify violation of SRP?
+
+a. Method with multiple if-else statements. Though this is not always true. If the if-else statement is part of the business logic, then it is not a violation of SRP. If the code inside each if-else block is independent of each other, then it is probably a violation of SRP.
+
+b. Monster method: It has code that does lot more than what its name suggests. Consider the following example
+```
+saveToDatabase(User user) {
+    String q = "Insert into users * VALUES(?, ?);
+
+    Database db = new Database();
+    db.set_url = ();
+    db.make_connection();
+
+    db.execute(q, user);
+}
+```
+There a three responsibilities. 1. There is a query. Tomorrow, if the query has to be changed, we have to change it here. 2. We have to create a connection to the database. 3. We have to save the data in the table.
+
+Lets change the method to the following
+```
+saveToDatabase(User user) {
+    String q = CreateQueryToSaveUser();
+    Database db = getDBConnection();
+    db.execute(q, user);
+}
+```
+
+SRP is identified when there is code duplication.
+
+c. Commons/Utilities: This package usually end up becoming a garbage place of all the code that the engineer does not know where to put.
+
+**Open/Close Principle**
+
+Our code base should be open for extension, but closed for modification. It should be easy to add new features. However, adding new features should not require changing already written code.
+
+Going back to our bird example, assume we have sparrow, crow, pigeon and owl. New requirement is, we need to add peacock. What changes do we need to make in the bird class?
+
+We need to modify the fly() method, the makeSound() method to include another if-else block for peacock. Hence we need to modify the methods. This is a violation of the open/close principle.
+
+Why do we need open/close principle. 
+
+a. To make testing easier. 
+b. Regression - Introduced new bugs while modifying the method. With o/c principle we avoid this.
+
+We are going to rewrite the bird class to satisfy SRP and o/c principle.
+
+Let the bird class be only responsible for generic details and not specifics. So we make it an abstract class with all the previous attributes and method. However, we define these functions in the specific classes. 
+
+![Bird](images/Bird2.png)
