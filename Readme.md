@@ -935,3 +935,30 @@ We are going to rewrite the bird class to satisfy SRP and o/c principle.
 Let the bird class be only responsible for generic details and not specifics. So we make it an abstract class with all the previous attributes and method. However, we define these functions in the specific classes. 
 
 ![Bird](images/Bird2.png)
+
+To add a new bird, we just have to create a new child class. We have reduced the number of potential changes we would have to make to the bird class in case of feature addition/modification. Bird class has lesser reasons to change. We still need a bird class, if say, we need a list of birds. Getting the list of birds will be hard without a bird class. 
+
+Now, suppose we need to add a new bird penguin. Penguins cannot fly, however the penguin child class will have to implement the fly method in the Bird class. How do we resolve this situation?
+
+Let us look at a few options:
+
+1. One way around this is to leave the fly() method implementation in the Penguin class empty.
+
+2. Throw an exception which says "Penguins cannot fly" when the fly() method is called. 
+
+Let us say, we as a client have following code.
+```
+class Client {
+    Bird b = getBird();
+    b.fly();
+}
+```
+In case b takes the object of the penguin class, then b.fly() will throw an exception. We, expecting the bird to fly, will get an exception. Our first reaction will be to search our own code for bugs, when the actual issue is at the library end. If the fly() method returns a "Penguins cannot fly", then that too is possibly a surprise for us if we expect the fly method to return the bird flying.
+
+The principle here is that we should design our system so that our clients experiences the least possible amount of surprises.
+
+Ideal Solution: If an entity does not support a behaviour, it should not have a method to do the behaviour.
+
+A possible solution is to remove the fly method from the Bird abstract class and have two more abstract classes, one for flying birds and other for non-flying birds.
+
+![Bird](images/Bird3.png)
