@@ -962,3 +962,4 @@ Ideal Solution: If an entity does not support a behaviour, it should not have a 
 A possible solution is to remove the fly method from the Bird abstract class and have two more abstract classes, one for flying birds and other for non-flying birds.
 
 ![Bird](images/Bird3.png)
+
