@@ -28,7 +28,7 @@ There are some common paradigms in programming.
 4. Reactive programming
 5. Declarative programming (SQL)
 
-### Procedural Programming
+## Procedural Programming
 
 Procedure is a set of instructions to perform a task or achieve an outcome. This is the same definition as a function. A procedure is nothing but a function/method. We organize our code into a bunch of procedures. Each procedure may internally call other procedures. Execution of a program starts from a special procedure (called main()).
 
@@ -89,13 +89,13 @@ To summarize, the cons of procedural programming are:
 4. Spaghetti code. This means parts of the code relating to an entity are lying in different parts of the filesystem.
 
 
-### Object Oriented Programming
+## Object Oriented Programming
 
 Principle: Abstraction
 
 Pillars: Inheritance, Encapsulation, Polymorphism
 
-#### What is Abstraction?
+## What is Abstraction?
 
 The quality of dealing with ideas and not events. It means representing an entity in terms of ideas. In the software world, anything that has attributes (information) or associated behaviour is an idea.
 
@@ -105,13 +105,13 @@ An idea can either be a real entity associated with a system or it can be a conc
 
 Others do not need to know about the detail of implementation of ideas.
 
-#### Encapsulation
+## Encapsulation
 
 Encapsulation is a pillar that helps us achieve abstraction. Encapsulation allows us to store attributes and behaviours of an idea together in a single place. What is this place? It is a class.
 
 There is another benefit to encapsulation. It helps us protect the attributes and behaviours from illegitimate access of other classes. 
 
-#### Terms of OOP
+## Terms of OOP
 
 **Class** - Blueprint of an idea. Let's take the idea of a student that we saw earlier. Let's explore some of a student's attributes and ideas.
 
@@ -342,7 +342,7 @@ In this case, assigning a new object to st in the function doSomething does not 
 **Destructor** - Once, work is done with an object, in languages like Java and Python, garbage collector removes these objects. In languages like C++, which are languages that use pointers, we have to use destructors to free up memory occupied by objects that are not in use anymore. 
 
 
-#### Inheritance
+## Inheritance
 
 Object oriented programming is based on thinking about software systems in the same way as we think about the real world. We form hierarchy/relations betweeen different entities inorder to understand them. In the same way, object oriented programming also allows us to form hierachies of categorization.
 
@@ -464,7 +464,7 @@ class D {
 The first line of the constructor of D should be super(c:"Hello"). If it is the second line, it will throw an error.
 super() -> super can be thought of as the name of the class. So super() is calling the constructor of the class. So, if we dont pass argument in super(), then it calls the default constructor.
 
-#### Polymorphism
+## Polymorphism
 
 If we go back to the Scaler example, the user takes multiple forms like student, instructor, mentor, TA etc. If we make a list of all users, then the list will take all objects of type User and of type any child class of User.
 
@@ -696,7 +696,7 @@ This, as we have seen, will print "Hi". This will not throw a compile time excep
 Method overriding is an example of runtime polymorphism.
 
 
-#### Interface
+## Interface
 
 Consider a concept that is not a real entity (not really having any attribute or definition of methods). This concept is categorized by the type of behaviours it supports. For example, animals can be classified by their bahviour. We can say anyone that can eat, walk and run is an animal. We dont need to know how these behaviours work. We just need to know that entities that can exhibit these behaviours are called animals. 
 
@@ -751,7 +751,7 @@ Benefits of interface is that systems become maintainable. When a class A has an
 
 One class can implement multiple interfaces.
 
-#### Abstract Class
+## Abstract Class
 
 Consider an entity that has attributes and behaiours. However, we dont have clarity on how thee behaviours will work.
 
@@ -796,7 +796,7 @@ We can implement multiple interfaces because methods are only declared in an int
 
 Use abstract classes when we have a parent class for whom we dont want to create an object.
 
-#### Static
+## Static
 
 ```
 class Client {
@@ -813,14 +813,14 @@ When we call a method, we call the method on the object and not on the class.
 
 When we run the client file, we dont create an object of the client. So how is the method main() called?
 
-Static keyword can be used with variables and method. A static method or variable allows us to access them without an object of the corresponding class. This is because static methods do not need objects of a class. They can access only static members. 
+Static keyword can be used with variables and method. A static method or variable allows us to access them without an object of the corresponding class. This is because static methods do not need objects of a class. They can access only static members of a class. 
 
 The most common use case of a static variable is to store a piece of information that is common for all objects of that class. For example, constants.
 
 A static variable is created when we load a class which happens when an application runs.
 
 
-#### SOLID Design Principles
+## SOLID Design Principles
 
 S - Single Responsibility Principle
 O - Open/close Principle
@@ -832,7 +832,7 @@ A software system should be extensible, maintainable, reusable, easily testable,
 
 We are going to design a bird to learn the application of these principles. We are going to store information about birds. This information will include names, sounds, flying ability, types etc.
 
-![Bird](images/Bird1.png)
+![Bird](images/Bird1new.png)
 
 To create a bird
 ```
@@ -963,3 +963,415 @@ A possible solution is to remove the fly method from the Bird abstract class and
 
 ![Bird](images/Bird3.png)
 
+This solves the immediate problem of flying and non flying birds. However, if we have to add a new bird that does not make sound, and we extend the above solution, we end up with something like this.
+
+![Bird](images/Bird4.png)
+
+Imagine, if we have to now solve this for a third feature. We would get 8 combinations of classes. This is called class explosion.
+
+Another issue is that if we have to create a list of flying birds, then that is not possible now, as some flying birds are part of one abstract class and the other flying birds are a part of another flying class.
+
+The new problem statement
+
+Some birds demonstrate a behaviour, while other birds dont demonstrate that behaviour. Only the birds that demonstrate a behaviour should have the method for the behaviour. We should be able to create a list of birds that demonstrate that behaviour. 
+
+The solution is to use interface. Interface is a blueprint for behaviour. So, we create interfaces to represent behaviour. Then we let the classes that are interested in various behaviours implement these behaviours. 
+
+To start with, create an abstract bird class that will only have generic attributes and methods that all birds will have. Then create intefaces representing the behaviours that we want and let the different bird classes implement the behaviours they want.
+
+![Bird](images/Bird5new.png)
+
+```
+class Sparrow extends Bird
+              implements Flyable, Dancer {
+
+                    void fly(){
+                        System.out.println("Sparrow is flying");
+                    }
+
+                    void dance(){
+                        System.out.println("Sparrow is dancing");
+                    }
+              }
+```
+
+We can implement the fyable interface for only those classes that need it. We can also create a list of birds that can fly. Thus, we have solved the problems from the problem statement.
+
+**Liskov's Substitution Principle**
+
+Object of any child class should be substitutable in a variable of parent class type, without requring any change in code.
+
+Earier, when we solved for the requirement of having birds that cannot fly, we proposed two solutions, one to throw an exception and two to return "bird cannot fly". In both cases, a client will have to handle this, by catching the exception, to keep the code running. This means giving special treatment to some of the child classes.
+
+All child classes should behave as their parent wants them to. No child class should give a special or different meaning to parent's method.
+
+For example, there is parent class called PagePrinter and it has print method
+```
+class Printer {
+    
+    void print() {
+
+    }
+}
+```
+Suppose we want to print something to the command line. So we make the commandline a printer.
+```
+class CommandPrinter extends Printer {
+    void print() {
+        System.out.println("Printing to command line");
+    }
+}
+```
+This is not okay, because the Printer class print() method is to print on paper. Consider this.
+```
+Printer p = __________;
+p.print();
+```
+The client expectation here is that p.print() will print on paper. Now suppose someone creates an object of CommandPrinter there.
+```
+Printer p = new CommandPrinter();
+p.print();
+```
+The client will be surprised to see the output printed on the screen, rather than on paper.
+
+Going back to the bird example, if the parent class is defining the fly method, then the child class should not override and say I will not fly.
+
+We should use overriding only when there is a different way to demonstrate the behaviour. We should not use it to change the behaviour itself.
+
+**Interface Segregation Principle**
+
+Suppose we are told that all birds that can fly will also dance and vice versa and we decide, given this information, to create an interface called FlyDance that has two methods, fly() and dance(). Post implementation, we get new information that there are some new birds that can fly but cannot dance or can dance but cannot fly. Post some healthy release of toxic emotions and thoughts, we will have to create seperate interfaces, one for fly behaviour and other for dance behaviour. This leads us to the interface segregation principle.
+
+1. Interfaces should be as light as possible.
+2. They should have as few methods as possible.
+3. Ideally interfaces should have only 1 method. This type of interface is called functional interface.
+
+Interface segregation principle can be thought of as application of single responsibility principle on interfaces. 
+
+**Dependency Inversion Principle**
+
+Lets look at the bird example again.
+
+![Bird](images/Bird5new.png)
+
+We get new information that pigeons and sparrow fly in the exact same way. This means when we implement the fly method for pigeon and sparrow, there will be code duplication. To solve this problem of code duplication, we can create a class called PigeonSparrowFlyBehaviour.
+
+```
+class PigeonSparrowFlyBehaviour {
+    void makeFly() {
+        System.out.println("Fly Behaviour");
+    }
+}
+
+class Pigeon extends Bird
+             implements Flyable {
+                PigeonSparrowFlyBehaviour psfb = new PigeonSparrowFlyBehaviour();    
+                void fly() {
+                    psfb.makeFly();
+                }
+             }
+class Sparrow extends Bird
+             implements Flyable {
+                PigeonSparrowFlyBehaviour psfb = new PigeonSparrowFlyBehaviour();    
+                void fly() {
+                    psfb.makeFly();
+                }
+             }
+```
+We have solved the code duplication. However, another issue that crops up is that we are depending on an implemention and not on an interface.
+
+Dependency Inversion principle say that no two concrete classes should directly depend on each other. They should depend on each other through an interface. 
+
+This means we have to create an interface for flying behaviours. 
+
+![Bird](images/FlyingBehaviour.png)
+
+Now, our pigeon class will look like this
+
+```
+class Pigeon extends Bird
+             implements Flyable {
+                FlyingBehaviour psfb = new PigeonSparrowFlyBehaviour();    
+                void fly() {
+                    psfb.makeFly();
+                }
+             }
+```
+We are now depending on the interface FlyingBehaviour rather than the concrete class implementation.
+
+This leads us to a concept called dependency injection. Dependency injection says instead of creating an object of a specific flyingbehviour in the child bird class, let the creator of the object of that bird class give your the specific flyingbehaviour object via the constructor. 
+
+
+```
+class Pigeon extends Bird
+             implements Flyable {
+
+                FlyingBehaviour fb;
+                
+                Pigeon(FlyingBehaviour flybehaviour) {
+                    fb = flybehaviour;
+                }
+
+                void fly() {
+                    fb.makeFly();
+                }
+             }
+```
+
+Now, our code is completely independent of any concrete implementation.
+
+
+## Design Patterns
+
+In the software world, design patterns are well established solutions to common software design problems.
+
+Design patterns are implementations of design principles. 
+
+Types of design patterns
+
+Design patterns are solutions to common problems in object oriented design (OOD). This is the basis on which design patterns are categorized. 
+
+An object is the central entity in OOD. The first thing we do with an object is to create it. So the first type of design pattern is called **creational design pattern**.
+
+Creational design patterns deal with how an object is created, how many objects are created. 
+
+Before we create an object, we need a class. **Structural design pattern** deals with how a class is structured. What is meant by the structure of a class? Structure deals with questions like what attributes should be there in the class? How will a class interact with other classes?
+
+What is the purpose of objects? We make them take action or perform a behaviour. **Behavioural design pattern** deals with how an action should be coded or how to implement a particular behaviour. For example, there are multiple ways to sort a collection of items. Suppose we want the ability to choose the sorting algorithm on the fly. Implementing this ability makes use of the behavioural design pattern.
+
+### Creational Design Pattern
+
+#### Singleton Design Pattern
+
+Singleton design pattern allows us to create a class for which only one object can be created.
+
+Why do we need this ability? 
+
+1. Consider a class that has a shared resource behind the scenes. For example, consider a DbConnection class and different services classes.
+```
+class DbConnection {
+    url = 'x.x.x.x';
+    username = 'trapper';
+    password = 'xxxx';
+    tcpConnection = x;
+    cache = map;
+}
+
+class Service1 {
+
+    DbConnection db;
+
+    db.save();
+    db.execute();
+}
+
+class Service2 {
+
+    DbConnection db;
+
+    db.save();
+    db.execute();
+}
+```
+There are multiple services using the DbConnection class. Do the db objects in the different services classes need to be different? All the DbConnection is going to do is to maintain the TCP connection, maintining cache etc. If we create multiple different DbConnections, then each object will have to maintain a TCP connection, maintain cache. TCP connections take time to establish, and consumes memory. So multiple connections are a waste of CPU resources. Instead, we can maintain one Db connection and let all the services use the same connection to interact with the database. 
+
+Another example is the logger class that prints to the same location and does not maintain an internal state. 
+
+2. Creation of an object is expensive. For example, creating a new database connection is slow. If for every request a server gets, it creates a database object, then the each of these requests will take time and hence expensive. 
+
+Singletons should always be immutable. If attributes of the object we create can be changed, then do not make a singleton because an attribute of the singleton object could be changed by one user, which will surprise the other users who did not expect the change. 
+
+How do we implement singleton?
+
+As long as a class has a contructor, can the class be a singleton?
+```
+class DatabaseConnection {
+    String url;
+    String username;
+    String password;
+    List<Connection> pool;
+}
+```
+DatabaseConnection class is not a singleton, because we can create multiple objects of the class. 
+
+So we make the constructor private
+```
+class DatabaseConnection {
+    String url;
+    String username;
+    String password;
+    List<Connection> pool;
+
+    private DatabaseConnection() {
+
+    }
+}
+```
+However, now, we cannot even make one object. The only way an object can be created now is to create one inside the class because private members are only accessible inside the class. We use a method called createInstance() inside the class to return the object of the class.
+```
+class DatabaseConnection {
+    String url;
+    String username;
+    String password;
+    List<Connection> pool;
+
+    private DatabaseConnection() {
+    }
+
+    public DatabaseConnection createInstance() {
+        DatabaseConnection dbc = new DatabaseConnection();
+        return dbc;
+    }
+}
+```
+How can we access the createInstance() method without creating an object first? We will have to make the method a static method. 
+```
+class DatabaseConnection {
+    String url;
+    String username;
+    String password;
+    List<Connection> pool;
+
+    private DatabaseConnection() {
+    }
+
+    public static DatabaseConnection createInstance() {
+        DatabaseConnection dbc = new DatabaseConnection();
+        return dbc;
+    }
+}
+```
+So now we can run the following code to get the object of the class.
+```
+DatabaseConnection dbc = DatabaseConnection.createInstance();
+```
+We have still not solved the problem because we can create multiple instances using the createInstance() method. 
+```
+DatabaseConnection dbc1 = DatabaseConnection.createInstance();
+DatabaseConnection dbc2 = DatabaseConnection.createInstance();
+```
+When we create an object the first time, we need to store it in a variable inside the class. We create the object only if the variable is null.
+
+```
+class DatabaseConnection {
+    String url;
+    String username;
+    String password;
+    List<Connection> pool;
+    private static DatabaseConnection instance = null;
+
+    private DatabaseConnection() {
+    }
+
+    public static DatabaseConnection createInstance() {
+        if (DatabaseConnection.instance == null) {
+            DatabaseConnection.instance = new DatabaseConnection();
+        }
+        return DatabaseConnection.instance;
+    }
+}
+```
+In a multi-thread environment, this solution has a problem. Two or more threads could be at the if condition at the same time before an object is created. So the if block gets executed because the condition is satisfied in all the above threads. So we end up with 2 or more objects of the class. This is, again, not the desirable outcome.
+
+The solution to this is early loading. We can create the object of the class when the class is loaded the first time or the application starts.
+
+```
+class DatabaseConnection {
+    String url;
+    String username;
+    String password;
+    List<Connection> pool;
+    private static DatabaseConnection instance = new DatabaseConnection();
+
+    private DatabaseConnection() {
+    }
+
+    public static DatabaseConnection createInstance() {
+
+        return DatabaseConnection.instance;
+    }
+}
+```
+
+The drawback here is that application start time will increase. The second drawback is the inability to parameterize the constructor as we are creating the object at load time and hence the parameter may not be available to be passed as an argument at startup.
+
+Another solution is to take a lock over the entire method. 
+
+```
+class DatabaseConnection {
+    String url;
+    String username;
+    String password;
+    List<Connection> pool;
+    private static DatabaseConnection instance = null;
+
+    private DatabaseConnection() {
+    }
+
+    public synchronized static DatabaseConnection createInstance() {
+        if (DatabaseConnection.instance == null) {
+            DatabaseConnection.instance = new DatabaseConnection();
+        }
+        return DatabaseConnection.instance;
+    }
+}
+```
+
+The drawback here is that, every time we call the createInstance() method, we take a lock over the entire method. This will lead to slower performance of the application.
+
+The solution to this is to move the lock inside the if statement. So, we take the lock only when the if statement is satisfied. This is better than taking a lock over the entire method.
+
+```
+class DatabaseConnection {
+    String url;
+    String username;
+    String password;
+    List<Connection> pool;
+    private static DatabaseConnection instance = null;
+
+    private DatabaseConnection() {
+    }
+
+    public static DatabaseConnection createInstance() {
+        if (DatabaseConnection.instance == null) {
+            // Take a lock
+            lock.lock();
+            DatabaseConnection.instance = new DatabaseConnection();
+            // Unlock
+            lock.unlock();
+        }
+        return DatabaseConnection.instance;
+    }
+}
+```
+
+There is still a wrinkle here that we have to iron out. Assume 2 threads have called the createInstance function. In both threads the if statement condition will be satisfied. First one thread will acquire a lock and will create a new object and release the lock. Immediately the second thread, which is already waiting inside the if statement, will also create a new object. Now there are two instances of the class which is not what we want.
+
+The solution is to check if an instance has been created, once more, after acquiring the lock.
+
+```
+class DatabaseConnection {
+    String url;
+    String username;
+    String password;
+    List<Connection> pool;
+    private static DatabaseConnection instance = null;
+
+    private DatabaseConnection() {
+    }
+
+    public static DatabaseConnection createInstance() {
+        if (DatabaseConnection.instance == null) {
+            // Take a lock
+            lock.lock();
+            if (DatabaseConnection.instance == null) {
+                DatabaseConnection.instance = new DatabaseConnection();
+            }
+            // Unlock
+            lock.unlock();
+        }
+        return DatabaseConnection.instance;
+    }
+}
+```
+This is known as double check locking. This is the best way to implement locking in production environments where performance is also critical.
