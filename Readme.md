@@ -1375,3 +1375,561 @@ class DatabaseConnection {
 }
 ```
 This is known as double check locking. This is the best way to implement locking in production environments where performance is also critical.
+
+It however, fails to handle serialization. Serialization means converting an object into a bytes array. Deserilization means converting a bytes array back to an object. At the end of this process, we end up with two objects. 
+
+How do we implement singletons using enums?
+
+**Pros and Cons of Singletons**
+
+Pros
+
+1. Resource Efficiency.
+2. Singleton is a good choice when creating a new object is inefficient. This is like caching an object for later use. 
+
+Cons
+
+1. It is difficult to test a class that is a singleton. When an object has been created, we cannot create a different mock object for testing purpose. 
+
+#### Builder Design Pattern
+
+Consider a class with a lot of attriutes.
+```
+class Student {
+    String name;
+    int age;
+    double psp;
+    String batch;
+    int id;
+    String univName;
+    int gradYear;
+    int phoneNumber;
+}
+```
+
+A regular way of instiantiating an object and initializing values is to use setters.
+```
+Student st = new Student();
+st.setName("Kiran");
+st.setAge(37);
+st.setPsp(100.0);
+st.setBatch("Nov21");
+st.setId(10);
+st.univName("IIT");
+st.gradYear(2010);
+st.phoneNumber(9820071701);
+```
+
+We want to validate an object before the creation of an object. For example, there should be no student with grad year > 2022, phone number should be valid, etc. No object of student should be created before all the validations are successful. 
+
+In the regular way of creating object, we first create the object and then validate the attributes using the setter methods. 
+
+The way to solve this is to perform all the validations in the constructor. What will our constructor look like?
+
+```
+class Student {
+    String name;
+    int age;
+    double psp;
+    String batch;
+    int id;
+    String univName;
+    int gradYear;
+    int phoneNumber;
+
+    public Student(String name, 
+                   int age, 
+                   double psp,
+                   String batch,
+                   int id, 
+                   String univName,
+                   int gradYear,
+                   int phoneNumber) {
+
+    }
+}
+```
+In the client's code, how will the object be created?
+```
+class Client {
+    public static void main(Stirng[] args) {
+        Student st = new Student("Kiran", 37, 100.0, "Nov21", 110, "IIT", 2010, 9820071701);
+    }
+}
+```
+In the client's code, we do not know how the contructor arguments map to class attributes. Hence, it is difficult to understand. There is a high chance of making an error while passing arguments to the parameters of the constructor due to the high number of arguments. For example error in the order of arguments, error due to mixing up arguments and parameters. Another issue that could crop up is when we have to add a new attribute nd hence a new parameter to the construtor. After adding another parameter to the constructor, all the existing constructor calls will have to updated or else we will run into errors.
+
+A solution is to create multiple constuctors. 
+```
+class Student {
+    String name;
+    int age;
+    double psp;
+    String batch;
+    int id;
+    String univName;
+    int gradYear;
+    int phoneNumber;
+
+    public Student(String name, 
+                   double psp) {
+    }
+
+    public Student(String name) {
+    }
+
+    public Student(String name, 
+                   double psp,
+                   int gradYear) {
+    }
+
+    public Student(String univName, 
+                   double psp) {
+    }
+}
+```
+There is an issue here. Constructor 1 and constructor 2 have the same signature and the compiler will throw an error. If there are N attributes, then there could be 2^N constructors. This is unweildy.
+
+To resolve this, we can use something called telescoping constructors. 
+```
+class Student {
+    String name;
+    int age;
+    double psp;
+    String batch;
+    int id;
+    String univName;
+    int gradYear;
+    int phoneNumber;
+
+    public Student(String name) {
+        this.name = name;
+    }
+
+    public Student(String name, int age) {
+        this(name);
+        this.age = age;
+    }
+
+    public Student(String name, 
+                   int age,
+                   double psp) {
+        this(name, age);
+        this.psp = psp;
+    }
+
+    public Student(String name, 
+                   int age,
+                   double psp,
+                   string univName) {
+        this(name, age, psp);
+        this.univName = univName;
+    }
+
+    public Student(String name, 
+                   int age,
+                   double psp,
+                   string univName,
+                   int gradYear) {
+        this(name, age, psp, univName);
+        this.gradYear = gradYear;
+    }
+
+    public Student(String name, 
+                   int age,
+                   double psp,
+                   string univName,
+                   int gradYear,
+                   int phoneNumber) {
+        this(name, age, psp, univName, gradYear);
+        this.phoneNumber = phoneNumber;
+    }
+}
+```
+Telescoping constructors should be avoided because, here too, there are too many constructors.
+
+The reason for the issues in all the approaches discussed till now is that there are many attributes that we need to validate and initiaize. We need a way to pass multiple values with each value mapped to a specific name/key through a single parameter in the constructor. Maps can help us do this.
+```
+class Student {
+    String name;
+    int age;
+    double psp;
+    String batch;
+    int id;
+    String univName;
+    int gradYear;
+    int phoneNumber;
+
+    public Student(Map<String, Object> map) {
+
+        String name = (String) map.get("name");
+        int age = (int) map.get("age");
+        .
+        .
+        .
+    }
+}
+```
+Here, we are type casting. This can create a couple of issues. One is that, a client can accidently pass in the wrong data type which will result in runtime exception. Second is that, a client could pass in a ky with a typo that will not be identified by the compiler and will result in a runtime exception.
+
+We need to think of a data structure that is like a map, should have compile time check for data type of values. It should allow values to be paired with keys only if they are of the correct datatype.
+
+Lets look at a class to perform these actions.
+```
+class Helper {
+    String name;
+    int age;
+    double psp;
+    String univName;
+    String batch;
+    int id;
+    int gradYear;
+    String phoneNumber;
+}
+
+class Student {
+    String name;
+    int age;
+    double psp;
+    String batch;
+    int id;
+    String univName;
+    int gradYear;
+    int phoneNumber;
+
+    public Student(Helper helper){
+        if (helper.gradYear > 2020) {
+            // throw exception 
+        this.name = helper.name;
+        this.age = helper.age;
+        }
+    }
+}
+
+Helper helper = new Helper();
+helper.setName("Naman");
+helper.setAge(25);
+helper.setPsp(100.0);
+helper.setUnivName("MCBC");
+
+Student st = new Student(helper);
+```
+
+Now, all the validations can happen in the student constructor. This design helps us satisfy the criteria of not being able to create an object of the Student class, before validating the attributes, without making the code unreadable and prone to typos and datatype errors.
+
+This helper class is helping is build and object of student. So, the helper is actually a builder and this is the builder design pattern.
+
+Ideally we should not have to create a builder object seperately and then use it to create the student object. We should be able to get the builder object from the student class and then get the student object from builder class using a build() method.
+
+```
+public class Builder {
+    
+    private String name;
+    private int age;
+    private double psp;
+    private String univName;
+    private String batch;
+    private long id;
+    private int gradYear;
+    private String phoneNumber;
+    
+    public String getName(){
+        return this.name;
+    }
+
+    public Builder setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public int getAge(){
+        return this.age;
+    }
+
+    public Builder setAge(int age) {
+        this.age = age;
+        return this;
+    }
+
+    public double getPsp(){
+        return this.psp;
+    }
+
+    public Builder setPsp(double psp) {
+        this.psp = psp;
+        return this;
+    }
+
+    public String getunivName(){
+        return this.univName;
+    }
+
+    public Builder setUnivName(String univName) {
+        this.univName = univName;
+        return this;
+    }
+    
+    public String getBatch(){
+        return this.batch;
+    }
+
+    public Builder setBatch(String batch) {
+        this.batch = batch;
+        return this;
+    }
+
+    public long getId(){
+        return this.id;
+    }
+
+    public Builder setId(long id) {
+        this.id = id;
+        return this;
+    }
+
+    public int getgradYear(){
+        return this.gradYear;
+    }
+
+    public Builder setgradYear(int gradYear) {
+        this.gradYear = gradYear;
+        return this;
+    }
+
+    public String getPhoneNumber(){
+        return this.phoneNumber;
+    }
+
+    public Builder setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        return this;
+    }
+
+    public Student build() {
+        // Validation begins
+        if (this.gradYear > 2022) {
+            throw new IllegalArgumentException("Grad year cannot be greater than 2022");
+        }
+        // Validation ends
+        return new Student(this)
+    }
+}
+
+public class Student {
+    private String name;
+    private int age;
+    private double psp;
+    private String univName;
+    private String batch;
+    private long id;
+    private int gradYear;
+    private String phoneNumber;
+
+    public static Builder getBuilder() {
+        return new Builder();
+    }
+
+    public Student(Builder builder) {
+
+        this.gradYear = builder.getgradYear();
+        this.age = builder.getAge();
+        this.name = builder.getName();
+    }
+}
+
+public class Client {
+    
+    public static void main(String[] args) {
+        
+        // Builder bld = new Builder();
+        // bld.setAge(25);
+        // bld.setName("Naman");
+        // bld.setgradYear(2015);
+
+        // Student st = new Student(bld);
+
+        Student st = Student.getBuilder().setAge(25).setName("Naman").setgradYear(2015).build();
+        System.out.println("Done");
+    }
+}
+```
+We do not want anyone else to have access to the studen constructor. So, we will make it private. However, now we cannot make a new Student object in the builder class. So we will move the entire builder class definition into the student class. Now we can access the student constructor from within the builder class. We should make the builder class static so that we can return an object of the builder class from the static method getBuilder() in the student class.
+
+```
+public class Student {
+    private String name;
+    private int age;
+    private double psp;
+    private String univName;
+    private String batch;
+    private long id;
+    private int gradYear;
+    private String phoneNumber;
+
+    public static Builder getBuilder() {
+        return new Builder();
+    }
+
+    private Student(Builder builder) {
+
+        this.gradYear = builder.getgradYear();
+        this.age = builder.getAge();
+        this.name = builder.getName();
+    }
+
+    static class Builder {
+    
+        private String name;
+        private int age;
+        private double psp;
+        private String univName;
+        private String batch;
+        private long id;
+        private int gradYear;
+        private String phoneNumber;
+        
+        public String getName(){
+            return this.name;
+        }
+
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public int getAge(){
+            return this.age;
+        }
+
+        public Builder setAge(int age) {
+            this.age = age;
+            return this;
+        }
+
+        public double getPsp(){
+            return this.psp;
+        }
+
+        public Builder setPsp(double psp) {
+            this.psp = psp;
+            return this;
+        }
+
+        public String getunivName(){
+            return this.univName;
+        }
+
+        public Builder setUnivName(String univName) {
+            this.univName = univName;
+            return this;
+        }
+        
+        public String getBatch(){
+            return this.batch;
+        }
+
+        public Builder setBatch(String batch) {
+            this.batch = batch;
+            return this;
+        }
+
+        public long getId(){
+            return this.id;
+        }
+
+        public Builder setId(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public int getgradYear(){
+            return this.gradYear;
+        }
+
+        public Builder setgradYear(int gradYear) {
+            this.gradYear = gradYear;
+            return this;
+        }
+
+        public String getPhoneNumber(){
+            return this.phoneNumber;
+        }
+
+        public Builder setPhoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+
+        public Student build() {
+            // Validation begins
+            if (this.gradYear > 2022) {
+                throw new IllegalArgumentException("Grad year cannot be greater than 2022");
+            }
+            // Validation ends
+            return new Student(this);
+        }
+    }
+}
+```
+Builder design patters is used when 
+
+1. There is a class with many attributes.
+2. We need to validate parameters before creating an object.
+3. There is an immutable cllass. All params need to be passed at creation which leads to higher chance of error while creating an object.
+
+Builder pattern is typically used in configuration setting.
+
+#### Prototype Design Pattern
+
+The problem statement here is that given an object of the class, we need to create a copy of that object.
+```
+class Client {
+    public static void main(String[] args) {
+        Student st = new Student();
+        Student stCopy = new Student();
+        stCopy.name = st.name;
+        stCopy.age = st.age;
+        stCooy.email = st.email.com
+    }
+}
+```
+In this approach, the client will need to know all the implementation details of the class Student. Another issue, is that there could be private attriutes that the client may not be able to set. 
+
+If the Student class has a child class, for example intelligent student, then the client will have to make type checks to determine the class type of the object.
+```
+class Client {
+    public static void main(String[] args) {
+        Student st = new Student();
+        Student stCopy;
+
+        if (typeof(st) == Student) {
+            stCopy = new Student();
+        }
+        else if (typeof(st) == IntelligentStudent) {
+            stCopy = new IntelligentStudent();
+        }
+    }
+}
+```
+This violates the open-close principle. If we add another child class in the future, we will have to make modifications in the client class.
+
+Considering all the approaches we have seen, the client class may not be the best place to create a copy of an object as it is prone to errors. The client should outsource the work to the object itself.
+
+```
+class Client {
+    Student st = new Student();
+    Student copy = st.copy();
+}
+```
+Benefits of this approach. Client does not need to know the internals of the class to be copied. There is no open close principle violation.
+```
+class Student {
+
+    public Student copy() {
+        Student stcopy = new Student();
+        stcopy.name = this.name;
+        stcopy.age = this.age;
+        return stcopy;
+    }
+}
+```
