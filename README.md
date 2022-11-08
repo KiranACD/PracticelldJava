@@ -1001,7 +1001,7 @@ We can implement the fyable interface for only those classes that need it. We ca
 
 Object of any child class should be substitutable in a variable of parent class type, without requring any change in code.
 
-Earier, when we solved for the requirement of having birds that cannot fly, we proposed two solutions, one to throw an exception and two to return "bird cannot fly". In both cases, a client will have to handle this, by catching the exception, to keep the code running. This means giving special treatment to some of the child classes.
+Earlier, when we solved for the requirement of having birds that cannot fly, we proposed two solutions, one to throw an exception and two to return "bird cannot fly". In both cases, a client will have to handle this, by catching the exception, to keep the code running. This means giving special treatment to some of the child classes.
 
 All child classes should behave as their parent wants them to. No child class should give a special or different meaning to parent's method.
 
@@ -1932,4 +1932,140 @@ class Student {
         return stcopy;
     }
 }
+
+class IntelligentStudent {
+    public IntelligentStudent copy() {
+        IntelligentStudent stcopy = new IntelligentStudent();
+        stcopy.name = this.name;
+        stcopy.age = this.age;
+        stcopy.iq = this.iq;
+        return stcopy;
+    }
+}
 ```
+If IntelligentStudent class did not implement the copy method, then the parent class' copy method will be called. This is not what is expected. Hence, all child classes must override the copy method, otherwise we can get unexpected outcomes. 
+
+Prototype is a proof of concept. Let us look at an example. Consider a notebook factory which has a factory management system. This factory management system will have a class called Notebook. All the notebooks that are created will be instances of this class. Let us look at the attributes of this class.
+
+![Notebook](images/Notebook.png)
+
+Suppose, we want to make 10000 ruled notebooks of A4 size paper with 120 pages. So, for all the notebooks, all the attributes expect frontPageDesign and funFacts will be the same. So the notebook factory can create a prototype.
+
+![NotebookPrototype](images/NotebookPrototype.png)
+
+When the factory works, it creates a copy of the prototype, adds the value of frontPage and funFact for each book. 
+
+Often there are scenarios where we create an instance of the prototype, change a few attributes and done. Prototype acts like a template.
+
+In case of the notebook, there were two ways to approach this. 
+```
+class Client {
+    Notebook book1 = new Notebook();
+    book1.type = "ruled";
+    book1.numberOfPages = 120;
+    book1.mrp = 40;
+    book1.height = 80;
+    book1.width = 20;
+    book1.frontPageDesign = "Tom&Jerry";
+    book1.funFacts = "DinoFacts"; 
+}
+```
+This is one way, where we make an instance of each notebook and fill in data for each attribute.
+
+```
+class Client {
+    Notebook prototype_120_A4_ruled = getA4RuledPrototype();
+    book1 = prototype_120_A4_ruled.copy();
+    book1.frontPageDesign = "Tom&Jerry";
+    book1.funFacts = "DinoFacts";
+}
+```
+This is the second way, where we make a copy of the prototype and fill in the required attribute only.
+
+Often there are scenarios where, we dont want to create objects from scratch. Rather, we prefer creating a copy from the template and changing the values in that copy.
+
+```
+class Client {
+    Student trishik = new Student();
+    trishik.name = "Trishik";
+    trishik.age = 21;
+    trishik.psp = 75;
+    trishik.averageBatchPsp = 81;
+    trishik.batchName = "Apr21";
+}
+```
+
+For all the students who belong to the batch "Apr21", the average batch psp will be the same. Say we want to create an object of another student Manish
+
+```
+class Client {
+    Student trishik = new Student();
+    trishik.name = "Trishik";
+    trishik.age = 21;
+    trishik.psp = 75;
+    trishik.averageBatchPsp = 81;
+    trishik.batchName = "Apr21";
+
+    Student manish = new Student();
+    manish.name = "Manish";
+    manish.age = 22;
+    manish.psp = 91;
+    manish.averageBatchPsp = 81;
+    manish.batchName = "Apr21";
+}
+```
+This is way 1. Another way is to access a registry of students and get a prototype.
+
+```
+class Client {
+    Student trishik = Registry.get("apr21").copy();
+    trishik.name = "Trishik";
+    trishik.age = 21;
+    trishik.psp = 75;
+
+    Student manish = Registry.get("apr21").copy();
+    manish.name = "Manish";
+    manish.age = 22;
+    manish.psp = 91;
+}
+```
+
+Way 2 seems to be the better approach in all the examples. 
+
+If we want to create objects using way 2, then we to follow these steps.
+
+1. In the class that we want to create a prototype for, there should be a method called clone(). This method creates a copy of the current object. If there are child classes, they should have clone() methods that override the parent class.
+
+2. Store the prototypes in a registry. In the case with student, we will create a class called StudentRegistry. StudentRegistry stores the different prototypes. Registries will typically have 2 methods, register and get. The prototype objects are usually stored in the registry at application start time. Registry can be a singleton.
+
+![StudentRegistry](images/StudentRegistry.png)
+
+3. The client calls the registry to get the prototypes. It then creates a copy of them to do its work. 
+
+If you want to create copies of object rather than copying it yourself, the object should have the responsibility to create copy. This is the prototype design pattern.
+
+If you need something repeatedly, store them in the registry. This is the registry design pattern.
+
+#### Factory Design Pattern
+
+Factory Method
+
+Imagine an application that interacts with a database. In the application codebase, there will be a UserService class.
+```
+class UserService {
+    Database db = ______________;
+
+    createUser() {
+        Query q = db.createQuery("insert into user ______");
+        q.execute();
+    }
+
+    registerUser() {
+        Query q = db.createQuery("_____________");
+        q.execute();
+    }
+}
+```
+The Database datatype should be an abstract class or an interface. If Database was concrete implementation, the design principle that will get violated here is the dependency inversion principle. It states that no two classes should be directly dependent on each other. We want Database to be an interface/abstract class so that in the future, if the need arises, we can change the database. 
+
+The Query datatype should also be an abstract class or an interface.
