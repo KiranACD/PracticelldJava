@@ -2068,4 +2068,508 @@ class UserService {
 ```
 The Database datatype should be an abstract class or an interface. If Database was concrete implementation, the design principle that will get violated here is the dependency inversion principle. It states that no two classes should be directly dependent on each other. We want Database to be an interface/abstract class so that in the future, if the need arises, we can change the database. 
 
+The different database classes like MySQL, postgres, mongodb implement the database interface.
+
+![DatabaseInterface](images/Database.png)
+
 The Query datatype should also be an abstract class or an interface.
+
+![QueryInterface](images/Query.png)
+
+We can replace the database, for example, from MySQL to postgres, in the UserService class easily without changing the rest of the code. The createQuery() method in the database class returns the appropriate query object. So the createQuery() method is the factory method of the Query class. 
+
+This is an example of the factory design method. If we did not use it, then we would have to check the instance of the db to create the appropriate query object.
+```
+class UserService {
+    Database db;
+    Query q;
+
+    UserService() {
+        if (db instanceof MongoDB) {
+            q = new NoSQLQuery();
+        }
+    }
+}
+```
+This violates the open-close principle, because when we add a new database into our codebase, we will have to make modifications in the UserService class.
+
+Suppose we add some more factory methods to the database abstract class/interface.
+
+![DatabaseInterface](images/DatabaseSRP.png)
+
+Now, the database interface has the following responsibilities
+
+1. It has the attributes and the methods needed for a database.
+2. Factory methods like createQuery(), createUpdater() and createTransaction() to get the corresponding object of different types. 
+
+So, database class, now, starts to violate the single responsibility principle.
+
+Abstract Factory design method says to divide the class into 2 classes. One to hold the attributes and methods. The other to have all the factory methods. 
+
+![DatabaseFactory](images/DatabaseFactory.png)
+```
+class UserService {
+    Database db;
+    DatabaseFactory dbf;
+
+}
+```
+
+Abstract factory design pattern says that if a class is beginning to have a lot of factory methods, then the class is starting to violate the single responsibilty principle. So, we should break the class into 2 classes. The first interface/abstract class will have all the attributes and methods that are specific to the entity. The second one will have all the factory methods. However, we need to connect the two classes. 
+
+![DatabaseFactory](images/DatabaseFactoryImp.png)
+
+```
+class UserService {
+    Database db;
+    
+
+    createUser() {
+        DatabaseFactory dbf = db.createDBFactory();
+        Query q = dbf.createQuery("____________");
+    }
+}
+```
+
+Another example of a practical application of abstract factory design pattern is a flutter application.
+
+![FlutterApp](images/UIFactory.png)
+
+Here, the createButton() method in the AndroidUIFactory class returns the AndroidButton object.
+
+To summarize, based on an object of a particular class, we need a correponding object of some other class, we put a factory method in the class. However, as we scale our application, a lot of factory methods can come up. This means SRP is getting violated in the class. So we break into a normal class and a factory class. We put a factory method in the normal class that will return the relevant factory. 
+
+Practical factory method creates objects of the same class. We have a class called XFactory. XFactory will have methods to create objects of X based on different criteria.
+```
+class DatabaseFactory {
+    Database createDatabaseByName(name) {
+        if (name == "MySQL") {
+            return new MySQL();
+        } else if (name == "Postgres") {
+            return new Postgres();
+        }
+    }
+}
+```
+Think about practical factory method when there are multiple variants of a class and you want to create an object of the correct variant based on parameters.
+
+Factory is anything that allows us to create new things. Factory method is a method in a class that creates objects of corresponding classes. Abstract factory method is a collection of factory methods. Practical factory is a way to create objects of multiple variants of a class/interface based on parameters.
+
+
+### Structural Design Patterns
+
+Structural design patterns deal with codebase structure, kind of classes, attributes in a class, communication between classes. 
+
+#### Adapter Design Pattern
+
+Macbook only supports type-c ports. So if we have a pen drve or sd card, how do we use those devices with macbook? We use an adapter that acts like an intermediary. Adapters try to convert one format to another to allow working with a device that only supports the latter format.
+
+Adapter design pattern allows a class to work with another class that is not already supported. We should consider using adapter design pattern when we work with third party APIs. 
+
+How do we implement adapter design pattern?
+
+1. Whenever you are connecting with third party APIs, create an interface with the methods that you need.
+
+![PhonePe](images/Phonepe.png)
+
+2. Create a class that implements the interface. this class uses third party API to get the work done.
+
+3. The client will have the object of interface datatype. 
+
+4. Object of the adapter will be given to the client via dependency injection.
+
+Adapter design pattern allows us to implement the dependency inversion principle.
+
+
+#### Decorator Design Pattern
+
+Suppose we want to get an icecream. So we go to the icecream shop to give them our order and build our icecream from scratch. We start with the orange cone, then stack a butterscotch cone. We ask for a scoop of chocolate ice cream, a scoop of vanilla ice cream, a scoop of chocolate ice cream. Then we ask to top the ice cream off with chocolate chips and coconut shavings.
+
+We have to implement a class that lets us build our own icecream cone.
+
+We can think of using decorator design pattern when we have an entity to which we can add multiple items and it still remains the same type.
+
+![WebApp](images/WebappDecorator.png)
+
+Consider a web application. Initially we have an entity called web app. We add a security layer to the web application. It still remains a web application. We add a command line api layer to it. It still remains a web application. 
+
+Consider an example of a notifier that currently sends notifications via sms.
+
+![Notifier](images/NotifierDecorator.png)
+
+We add functionalities to send slack messages and emails. The entity still remains a notifier.
+
+We should think about using decorator design pattern when we want to enhance the behaviour of an entity at runtime.
+
+Taking the notification example above, say we can send messages to slack, email, sms, whatsapp, facebook. A client c1 wants to send messages to only slack, email and sms. A client c2 want to send messages to only whatsapp and facebook. A client c3 wants to only send messages to email and whatsapp.
+
+Whats a way to construct such kind of a notifier?
+
+A way would be have individual classes like slackNotifier, EmailNotifier, SMSNotifier, WhatsappNotifier, FacebookNotifier. Now we also want classes like WhatsappFacebookNotifier, EmailWhatsappNotifier. If we create classes for each combination, it will result in class explosion. This is an ideal scenario to use decorator design pattern.
+
+How can we implement this?
+
+Lets go back to our icecream example. We want to build a software that allows people to construct a custom icecream.
+
+1. Define an abstract class/interface that represents the entity we are constructing. 
+
+2. Lets say an icecream parlour is interested in knowing the contituents of the icecream and its cost. So, we can create an interface that has two method getDescription() and getCost().
+
+![IcecreamCone](images/IcecreamCone.png)
+
+getCost() method will return the sum of the cost of all the constituents. getDescription will return the description of custom cone, so that the parlour can make the cone.
+
+3. There are 2 types of things that we will add. These are base items and addon items. Base items in this case will be different types of cones. Addons will be the icecream scoops, sprinklers. Make each base item and addon item class which implements the IcecreamCone interface.
+```
+class OrangeCone {
+
+    public double getCost() {
+        return 10.0;
+    }
+
+    public String getDescription() {
+        return "Orange cone";
+    }
+}
+
+class VanillaScoop {
+
+    IcecreamCone cone;
+
+    public VanillaScoop(Icecream cone) {
+        this.cone = cone;
+    }
+    public double getCost() {
+        return cone.getCost() + 15.0;
+    }
+
+    public String getDescription() {
+        return cone.getDescription() + " Vanilla Scoop";
+    }
+}
+```
+In the client code, we will construct the cone.
+```
+IcecreamCone icecream = new VanillaScoop(new OrangeCone());
+icecream.getCost();
+icecream.getDescription();
+```
+This is the way to implment decorater design pattern.
+
+
+#### Flyweight Design Pattern
+
+In a multiplayer online game, the initial state of the game is loaded to all the user's devices. Any action that a player takes is replicated in the state of all other user's devices.
+
+In a game with guns, lets assume each player has 2 guns, 500 bullets of 10 different types of bullets. All the objects that are need to display the state of the game will be in the memory of all users. 
+
+Some of the objects that will be in the frontend of the game are Wall, Player, House, Gun, Bullet.
+Lets focus on the Bullet class. 
+
+![Bullet](images/Bullet.png)
+
+Lets look at the size each of these attributes will occupy in the memory.
+```
+- type : enum : 4 bytes
+- weight : double : 8 bytes
+- coordinate (x, y, z): 24 bytes
+- speed : double : 8 bytes
+- colour : enum : 4 bytes
+- direction : double : 8 bytes
+- image : 2 kb
+- maxPower : double : 8 bytes
+```
+The total size of a bullet object should approximately be 2 Kb. There can be about 100 players and there are about 500 bullets. So the total memory taken up by all the bullets in the device is about 100 MB. The memory usage seems to be high. 
+
+A closer look at the size of each attribute of the bullet reveals that, most of the space is taken up by the image of the bullet.
+
+Now, we know there are only 10 types of bullets. So we do not need to store the image of the bullet for all the number of bullets in the game. In fact, we need to determine the attributes that will change during the game and those that will remain fixed. 
+
+```
+- type : fixed
+- weight : fixed
+- coordinate (x, y, z): change
+- speed : change
+- colour : fixed
+- direction : change
+- image : fixed
+- maxPower : fixed
+```
+Flyweight design pattern says that we often have objects with two different types of properties. These are intrinsic and extrinsic. Intrinsic properties will not change. The extrinsic properties are external and they depend on the environment and they will change.
+
+If the replication of intrinsic properties is leading to a lot of memory usage, consider removing intrinsinc properties from the class.
+
+We can divide the class into two classes. One with intrinsic properties and the other with extrinsic propeties.
+
+![Bullet](images/FlyingBullet.png)
+
+We have an object of the bullet class in the FlyingBullet class. Now, we can have 100*500 flying bullets and 10 bullets. Each flying bullet will occupy 44 Bytes. The bullet object varriable in the flying bullet object stores the address of bullet object. So it occupies only 4 bytes. The size of 1 bullet is 2 KB. The total size is 44 * 50000 bytes which is appoximately 200 KB. The size of the bullet is 10 * 2 Kb which is 20 KB. So, now the total size = 220 KB. This is drastically lower than the 100 MB that we had earler.
+
+The flyweight design pattern allows us to seperate the intrinsic weight of an object and fly with a lower weight. 
+
+
+### Behavioural Design Patterns
+
+Behavioural design patterns deal with implementing a particular type of functionality (behaviour) in our codebase.
+
+#### Strategy Design Pattern
+
+In google maps, when we select location A and B, the app shows us multiple travel routes and multiple modes of travel. If we select th cycle mode of travel and click on the start button, a function in google maps codebase/class called findPath(from, to, mode) will be called, which will find a path from A to B via a particular mode of transport. 
+```
+GoogleMaps {
+    findPath(from, to, mode) {
+        if (mode == walk) {
+            return walkpath;
+        }
+        else if (mode == cycle) {
+            return cyclepath;
+        }
+        else {
+            retun something;
+        }
+    }
+}
+```
+This function is a violation of the open-close principle and the single responsibility principle. If we ever need to add a new mode of transport, we will need to make changes in the findPath function. It violates SRP because the googlemaps class is responsible for calculating the path via car, via cycle, via walk etc.
+
+Rather than having one single class and one findPath() method, we can probably have class called WalkPathCalculator. We can add a method called findPath(from, to) that will only deal with walking paths. We can do the same thing with the CarPathCalculator which will only deal with calcuating car paths.
+```
+WalkPathCalculator {
+
+    findPath(from, to) {}
+}
+
+CarPathCalculator {
+
+    findPath(from, to) {}
+}
+```
+Here, we have now divided the responsibility of calculating paths to these classes. We need to create an interface called PathCalculator. All the different path calculators implements the interface. All the classes will have a method called findPath().
+
+![GoogleMaps](images/GoogleMaps.png)
+
+Strategy design pattern says, whenever there are multiple ways/algorithm/strategy to perform a behaviour, dont put the code in the client class as it will violate SRP and OCP. Instead, create an interface to represent that behaviour and make each variant of that behaviour as a subclass of the interface. 
+
+Strategy design pattern helps us implement SRP and OCP.
+
+Adapter design pattern and strategy design pattern may look similar, however, there are a number of differences.
+```
+            Adapter                 |               Strategy
+
+- Structural                               - Behavioral
+- How to talk with third                   - How to implement behaviour with multiple variants
+  party class
+- Classes wrap third party classes         - Classes implement behaviour
+
+```
+
+#### Observer Design Pattern
+
+Imagine the codebase of any e-commerce website. In this case, let us take the example of Flipkart.
+
+Consider a Flipkart class which has a method called orderPlaced(). Once order has been place, flipkart has to do a number of things like send app notificiation, send email, update inventory, generate invoice, update analytics.
+
+These are important events, but, in the future, we may want to add more tasks or reduce the number of tasks. For example, we may want to add a task to update the courier partner.
+
+How does Flipkart perform these tasks?
+
+A possible way might be to 
+
+1. Create objects of all the task classes in the Flipkart class and call the appropriate method of these objects in the orderPlaced() method
+```
+class Flipkart {
+    AppNotifier appnotifier;
+    EmailSender emailsender;
+    InventoryManagementSystem ims;
+    InvoiceGenerator invoicegenerator;
+    UpdateAnalytics updateanalytics;
+
+    public void orderPlaced() {
+        appnotifier.notify();
+        emailsender.send();
+        ims.update();
+        invoicegenerator.generate();
+        updateanalytics.update();
+    }
+}
+```
+
+This looks clunky. It violates the open-close principle because if we want to add a new task in the future, we will have to make changes in the Flipkart class.
+
+One solution for this is to define an OrderPlacedHandler class.
+```
+class Flipkart {
+    
+    OrderPlacedHandler oph;
+
+    public void orderPlaced() {
+        oph.handle();
+    }
+}
+
+class OrderPlacedHandler {
+
+    AppNotifier appnotifier;
+    EmailSender emailsender;
+    InventoryManagementSystem ims;
+    InvoiceGenerator invoicegenerator;
+    UpdateAnalytics updateanalytics;
+    
+    public void handle() {
+        appnotifier.notify();
+        emailsender.send();
+        ims.update();
+        invoicegenerator.generate();
+        updateanalytics.update();
+    }
+}
+```
+This is the facade design pattern where we keep the Flipkart class light and move the heavy lifting to another class. However, OCP is still being violated here. If we want to add a new feature, we will not be able to add it at runtime. We will have to stop our application, restart the server, make the change and then start the application back up.
+
+Assume there is a facility where, when an order is placed on flipkart, an announcement is made and the other classes are able to listen to this announcement and perform the required action.
+
+This model is known by many names like public-subscriber model, producer-consumer model, speaker-listner model, subject-observer model.
+
+We have a class that has a special event, that others are interested in, to perform certain actions. Publisher is the class that hs the special event. Subscribers are the classes that have to perform an action based on the event. 
+
+Publisher class has to maintain a list of subscribers. Subscriber is an interface that is implemented by anyone that wants to know when the event happens.
+
+Publisher provides a way for subscribers to register and unregister. Subscriber interface has a method called notify. 
+
+![Flipkart](images/Flipkart.png)
+
+The subscribers will register themselves in the subscribers list when an object of the subscriber is created. The subscribers cannot be subscribed in the subscribers list in different objects of the Flipkart class. So the Flipkart class needs to be a singleton.
+
+
+
+## UML Diagrams
+
+We have to show the implementation of the system that we have designed. This can be for a couple of reasons. We may need to get the system design approved or we may need to communicate the architecture with other stakeholders. 
+
+What are the most common ways to communicate?
+
+1. Words. This can take the form of emails, meetings, slack groups etc. The cons with using this mode of communication is that there can be ambiguity which could result in misunderstanding. Explaining complex scenarios using technical jargon can be difficult. 
+
+2. Pictures. This can take the form of images, diagrams, flowcharts etc. They make it easier to understand complex things. Pictures usually have less ambiguity and it also makes it easier to visualize scenarios. The con is that there is not standardization in just using images/diagrams. Each person could represent a concept/entity using a different image/diagram and this will lead to ambiguity and hence misunderstanding.
+
+UML (unified modelling language) provides a standardization in reprsentation of different software engineering concepts in diagrams. This addresses the con we discussed earlier. 
+
+Two types of UML diagrams are structural and behavioural UML diagrams. 
+
+Structural UML diagrams represent the codebase structure. This includes things like details of classes, attributes in the classes, links between classes etc. 
+
+Behavioural UML diagrams represent the behaviour of a system. This includes things like functionalities in a system, supported features in the system etc.
+
+There are different types of structural and behavioural UML diagrams.
+```
+            Structural                      |                       Behavioural
+
+1. Class diagram                                   1. Attribute diagram
+2. Package diagram                                 2. Use-case diagram
+3. Object diagram                                  3. Sequence diagram
+4. Component diagram
+```
+
+Use-case diagrams deal with different features/functionalities that supported by a software system, users that can use the features/functionalities.
+
+There are 5 key words in use-case diagrams. 
+
+1. System boundary. This is a rectangle and it represents the scope of my system. This only includes the features that are implemented by our system. It will not include features implemented by third party libraries. 
+
+2. Use-case. This is feature/functionality supported by the system. This must alwas be verbs. It is represented as an oval.
+
+![ScalerUseCase](images/ScalerUseCase.png)
+
+3. Actor. People who use a particular use case. They are represented bya stick diagram. 
+
+![ScalerUseCaseActor](images/ScalerUseCaseActor.png)
+
+4. Includes. Within a function, when there is another function call, then latter function is called the child and the former function is called the parent. In UML diagram, this relationship is represented as parent includes child. This means, the child function has to finish its execution before the parent function can finish. 
+
+![UML Includes](images/UMLIncludes.png)
+
+5. Extends. This is used when one feature has multiple variants.
+
+![UML Extends](images/UMLExtends.png)
+
+The arrow is always from speciality to generality. 
+
+![UML Extends](images/UMLExtends1.png)
+
+
+Representing combined use case for scaler with examples of use case, actors, includes and extends.
+
+![Scaler mini UML](images/ScalerUseCaseCombined.png)
+
+
+## Class Diagrams
+
+Class diagrams are used to represent entities in the software system. These include classes, abstract classes, interfaces, enums. These diagrams are also used to represent the relationship between these entities. These include implementations of an interface, extension of a class, attribute of another class.
+
+### Class
+
+The attributes in a class are represented as:
+
+[access modifier] [name] : [datatype]
+
+Access modifier is represented using symbols
+```
+public    -->  +
+private   -->  -
+protected -->  #
+```
+
+Methods are represented as:
+
+[access modifier] [name]([datatype]) : [return data type]
+
+![Class](images/Class.png)
+
+### Interfaces
+
+In an interface, the name is represented as <<name>>.
+
+All the methods have public access modifier.
+
+Anything static is represented with an underline below it.
+
+![Interface](images/Interface.png)
+
+### Abstract Class
+
+Abstract class is represented like a normal class except for one difference. Anything abstract is represented in italics.
+
+![Abstract Class](images/AbstractClass.png)
+
+### Enums
+
+![Enums](images/Enums.png)
+
+### Relationships between Entities
+
+There are two categories of relationship between entities. 
+
+1. Inheritance (is-a relationship). These are like extending a class or implementing an interface.
+
+2. Associations (has-a relationship). These are like having an attribute of another class.
+
+Inheritance is always represented as a child to a parent.
+
+There are two types of associations. Composition and aggregation.
+
+Aggregation means collection. When you collect something, it exists independently. Aggregation is a relationshoip between two classes where both of the classes have independent existence. The object of both these classes make sense independently.
+
+For example, in a ticket booking platform for a variety of shows, there is a class ticket that has an attribute called show. Show is another class and the object of show can exist independent of ticket. Even if the object of ticket is deleted, an object of the show still exists.
+
+Aggregation is also called weak association.
+
+![Aggregation](images/WeakAssociation.png)
+
+Composition means creation. Class A composes B if objects of B cannot exist without object of A.
+
+Consider a House class with an attribute called door. The existence of the object of door does not make sense without a house. In Amazon, a customer will have an address. The address cannot exist independent of the customer. 
+
+Composition is also called strong association.
+
+![Composition](images/StrongAssociation.png)
+
