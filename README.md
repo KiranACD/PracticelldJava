@@ -2482,24 +2482,24 @@ There are 5 key words in use-case diagrams.
 
 3. Actor. People who use a particular use case. They are represented bya stick diagram. 
 
-![ScalerUseCaseActor](images/ScalerUseCaseActor.png)
+![ScalerUseCaseActor](images/ScalerUseCaseActorNew.png)
 
 4. Includes. Within a function, when there is another function call, then latter function is called the child and the former function is called the parent. In UML diagram, this relationship is represented as parent includes child. This means, the child function has to finish its execution before the parent function can finish. 
 
-![UML Includes](images/UMLIncludes.png)
+![UML Includes](images/UMLIncludesNew.png)  
 
 5. Extends. This is used when one feature has multiple variants.
 
-![UML Extends](images/UMLExtends.png)
+![UML Extends](images/UMLExtendsNew.png)
 
 The arrow is always from speciality to generality. 
 
-![UML Extends](images/UMLExtends1.png)
+![UML Extends](images/UMLExtends1New.png)
 
 
 Representing combined use case for scaler with examples of use case, actors, includes and extends.
 
-![Scaler mini UML](images/ScalerUseCaseCombined.png)
+![Scaler mini UML](images/ScalerUseCaseCombinedNew.png)
 
 
 ## Class Diagrams
@@ -2523,7 +2523,7 @@ Methods are represented as:
 
 [access modifier] [name]([datatype]) : [return data type]
 
-![Class](images/Class.png)
+![Class](images/ClassNew.png)
 
 ### Interfaces
 
@@ -2533,17 +2533,17 @@ All the methods have public access modifier.
 
 Anything static is represented with an underline below it.
 
-![Interface](images/Interface.png)
+![Interface](images/InterfaceNew.png)
 
 ### Abstract Class
 
 Abstract class is represented like a normal class except for one difference. Anything abstract is represented in italics.
 
-![Abstract Class](images/AbstractClass.png)
+![Abstract Class](images/AbstractClassNew.png)
 
 ### Enums
 
-![Enums](images/Enums.png)
+![Enums](images/EnumsNew.png)
 
 ### Relationships between Entities
 
@@ -2563,7 +2563,7 @@ For example, in a ticket booking platform for a variety of shows, there is a cla
 
 Aggregation is also called weak association.
 
-![Aggregation](images/WeakAssociation.png)
+![Aggregation](images/WeakAssociationNew.png)
 
 Composition means creation. Class A composes B if objects of B cannot exist without object of A.
 
@@ -2571,5 +2571,225 @@ Consider a House class with an attribute called door. The existence of the objec
 
 Composition is also called strong association.
 
-![Composition](images/StrongAssociation.png)
+![Composition](images/StrongAssociationNew.png)
+
+
+## Types of LLD Questions
+
+```
+LLD Round/                   |          Design Round            |           Machine Coding
+Coding Round/Theory Round    |                                  |
+
+- Theory related to LLD         - Designing a real system           - Popular in startups
+(OOP, Design Principles,          (Non startup companies)           - Design a real system    
+Design Patterns)                  Google, Amazon                    - Test practical skills by 
+FAANG                                                                 asking to implement working
+Mid Tier Startup                - No end-to-end solution              solution.
+```
+
+Two types of rounds in LLD
+
+1. Theoretical. If asked to code, only code small examples.
+
+2. Practical. There are two types here.
+
+a. Design. Here we are tested on theoretical concepts in OOP, design principles and patterns by problem solving.
+
+b. Design and Implementation. Here we are tested on design skills and also practical coding skills. These are like being able to take input from command line, building an API and being able to transact with a database.
+
+In almost all companies, each of these rounds is language agnostic.
+
+What is expected from us in design and machine coding rounds?
+```
+                Design                         |                    Machine Coding
+
+- Gathering requirements (Problem statement)     - No gathering requirements need. Requirements
+  is usually one line.                             are already listed
+- Clarifying requirement. Ability to identify    - Clarifying requirements
+  edge cases. Ability to ask questions that      - Use case design
+  will impact design.                            - Class diagram
+- Use case diagram. This is asked rarely.        - Schema Design
+- Class diagram                                  - Code end-to-end implemenation. It should take
+- Schema Design. Most times our classes end up     inputs, do the work and display the output.
+  becoming a table. So we have to find the       - Code should follow good design practice.
+  relationship between classes.                  - Some followup will be on concurrency, scaling 
+- Code a few of the classes.                       up.
+```
+
+**Design round structure**
+
+Spend less than 15 minutes in gathering requirements and clarifying requirements. Spend about 15 minuted doing the class diagram and the schema design. Spend 15 minutes writing the code and discussing issues related to the design and the code.
+
+
+**Machine code round structure**
+
+Usually interviewer comes and gives the requirements, discusses the class diagram and the schema in about 20-25 minutes. Then the interviewer gives you the go ahead to write the code for about 1 hour to 1 hour and 15 minutes. Spend the remaining time discussing various topics.
+
+
+**Gathering Requirements**
+
+The input in this phase is usually just one line. The output should typically be 
+
+a) List of features.
+b) A visualization of the system in your mind.
+
+How do we achieve this? We should start with an overview. There are typically two types of problems that are given in an interview.
+
+1. We know the system. In this case, we need to determine that our knowledge of the system is what is expected in the interview. We need to know if the interviewer expects anything different about the system.
+
+2. We have no idea about the system. There is an approach we can take to understand and solve this system. 
+
+a. We should ask the interiewer about the problem statement that the system solves. Ideally, you want the interviewer to tell you about the system as much as possible. If you take this approach, then the interviewer will provide a high level scope of the system. 
+
+b. We should ask about the type of problem. For example, when designing a parking lot, we need to figure out whether we are designing a parking lot management system or a parking lot entity. 
+
+There are usually a few types of LLD problems. There are entity type problems like bird/pen, real life management system (like parking lot, bookmyshow and splitwise) , web apis (similar to real life management system), real-time systems, engineering cases.
+
+To summarize, while gathering requirements we need to get an overview of the system and suggest ideas.
+
+**Clarifying Requirments**
+
+While gathering requirments, take a step back and check if all the features make sense together. There is always a scope for clarification. For example, when we have to save data, we can consider size restriction of saved data (photos).
+
+Clarifying questions are about edge cases in a behaviour. Ideally ask doubts that will affect design.
+
+Stop when you are able to visualize the scope of the system. Ideally, we should have thought of classes, attributes and methods to some extent by now.
+
+Another type of clarifying questions are about changes in future scope. 
+
+**Use-Case Diagram**
+
+List down the requirements and list down the actors and this will be done.
+
+**Class Diagram**
+
+We are not expected to draw all the classes. The expecation is to draw all the models (entities). Sometimes we may need to draw stratgies and factories. We do not need to draw helper classes. The expectation in an interview is to be able tp identify all the entities. 
+
+There is no requiement to follow all the UML classes. We need to represent the cardinality of relationship between the classes (1:1, 1:m). 
+
+We have to identify classes from the requirments. There are two ways to identify classes in any problem. 
+
+a. The nouns in the requirements. For every noun in the requirements, check if we have to store information about it.
+b. Visualization.
+
+**Schema Design**
+
+The expectations in an interview in relation to schema design is to
+
+1. List down all the tables.
+2. List all the attributes of that table.
+3. Do the attributes help store relation? (for eg: many-to-many relations).
+
+The representation of tables is not that important.
+
+Schema design is a blueprint of how the database is going to be structured. 
+
+Here, we assume, we are going to use an SQL database. It is recommended to go for a NoSQL database if and only if there are constraints to using an SQL database. Some of these constraints can be issues like SQL does not support sharding for our use case, or there are too many writes and SQL database does not work well with these writes etc. SQL is chosen by default, because of the efficiency, community and history of the the technology. 
+
+In an interview process, using SQL database allows us to show the interviewer our thought process in ways like, a) representing the data that we have to store, b) representing the relation between the entities. In general, we have to optimize for achieveing 
+
+1. Less redundancy, as data duplicaion can lead to anomalies like update anomalies, delete anomalies, insertion anomalies. 
+2. Fast retrieval. How we structure our database also depends on how we want to access data from the database. If we want to access a particular column and we have a choice in the table to store the column, we should choose the table that will let us retrieve the data quickly.
+
+The ways to approach schema design in interviews is to
+
+1. Find all the entities in the use cases. All the classes in the class diagram are entities.
+2. For all the class, create one table for each class. In these tables, put all the non-assocation attribute. Do not put relationships, put primitive attibutes first.
+3. For all relationships between entities, represent them based on the cardinality.
+
+**Code**
+
+It is okay to use a framework if requied (for eg, when we have to create APIs). 
+
+It is usually okay to not write test cases. 
+
+It is okay to not write code for all the requirements. However, it is not okay to not write complete code for any requirment. Usually, people write code for all the models, then all the controllers, then services, then repositories and then they try to connect it. The issue with this approach is that we will run out of time and none of the requirements will work. 
+
+There is no need to connect to a real database. We can implement an in-memory database. Instead of storing it to a real repository, we just store things in a map/list/set.
+
+**Schema Design Case Study**
+
+We are going to make a schema design for Scaler. We will start with the schema design of a basic application and then progressively add features and make it complex.
+
+To start with, the requirements are
+
+1. Students should be able to login.
+2. For each student, we need to store their profile, which include name, email, university name.
+
+The first step is to find the entities. Entities are nouns for which we need to store information. Student is a noun for which we need to store information. 
+
+![Student](images/StudentSchemaDesignNew.png)
+
+Once we have the class diagram, we create a table for each class. We have on class called Student. So we create a table called students. We need primary key when we want to persist the data. The primary key is required for indexing, ensuring data updation happens in the correct row, data retrieval etc. Here, primary key will be an id.
+```
+id      |       name        |       email       |       univName        |       password
+```
+
+Now we add more use cases. Scaler will have mutiple batches. Every student may enroll in upto 1 batch. For every batch, we need to store its name. The Batch class can have a list of students. The Student class can have a batch attribute. 
+
+![Student](images/StudentBatchSchemaDesign.png)
+
+The student class schema will have the same columns as before and an additional new column to represent the batch, but it will not be the batch name, rather it will be the batchId. This will be the primary key of the table representing the Batch class.
+```
+Students
+id    |    name    |    email   |    univName     |    password     |    batchId
+
+
+Batches
+id    |    name
+```
+Batches table will not have the students list because it violates the 1NF, which says that every column must be an atomic datatype, which a list is not.
+
+The relationship between Student class and Batch class is M:1. If there is a 1:M relation or an M:1, we have to put the id of the table reprenting the 1 side in the table representing the M side. This is why we have to put the batchId in the students table. 
+
+There are some exceptions. In our case study, every student will not have a batchId. This is because the requirements state that every student may enroll in upto 1 batch. So a student may not be enrolled in any batch. So some rows will have NULL values. Why is this a problem? In case of a scenario where there are 50000 students, but 45000 are not enrolled in any batch, then the batchId column will have many NULL values which is a waste of space. Such a table is also called a sparse table. Is wasting space/storage always bad? No. This is an issue only when the table is sparse and we need to optimize for storage. In such a case, it is better to represent a 1:M or M:1 relationship in a seperate matching table.
+```
+Students
+id    |    name    |    email   |    univName     |    password
+
+Batches
+id    |    name
+
+Student-Batch
+studentId    |    batchId
+```
+
+While optimizing for space, we will be sacrificing time complexity. In order to get the batch of a particular student, we will have to join the Students table with the Student-Batch table and then join the result wiwth the Batches table. JOIN is a costly operation with respect to time complexity.
+
+So the choice of schema is discretionary and dependent on the use case and time complexity and space complexity constraints. If there are no space complexity constaints, then we can choose the first schema design, however, if there are time space complexity constraints and they matter more than any time complexity constraints, then we will choose the schema design for sparse tables.
+
+In version 3 of Scaler, one student can belong to upto 4 batches. The batch attribute in the Student class will now become list of batches. 
+
+![Student](images/Student4BatchesSchemaDesign.png)
+
+The cardinality of relationship now becomes M:M. This is because one student can now belong to upto 4 batches. Anything greater than 1 becomes M. 
+
+Suppose we carry forward the first schema design from the previous version and get something like
+be the primary key of the table representing the Batch class.
+```
+Students
+id | name | email | univName | password | batchId1 | batchId2 | batchId3 | batchId4
+
+
+Batches
+id    |    name
+```
+The cons of such an approach are
+1. There will be many NULL values.
+2. We need to alter the table if we increase the number of batches a can enroll in.
+3. Queries will be complex. For example, queries for finding students that are enrolled in 3 batches. 
+
+When there is an M:M relationship, we should create a seperate mapping table.
+```
+Students
+id    |    name    |    email   |    univName     |    password
+
+Batches
+id    |    name
+
+Student-Batch
+studentId    |    batchId
+```
+
+When the cardinality is 1:1, then we can have an id of one side on the other side. If the table is sparse and we want to optimize on space, then we should create a seperate mapping table of two columns where each columns is the primary key of the two other tables.
 
